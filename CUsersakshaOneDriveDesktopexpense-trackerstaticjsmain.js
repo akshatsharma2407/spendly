@@ -1,21 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('video-modal');
     const btn = document.getElementById('watch-demo');
-    const span = document.querySelector('.close-modal');
+    const span = document.getElementsByClassName('close-modal')[0];
     const video = document.getElementById('demo-video');
 
     if (btn && modal) {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault(); // Prevent # from scrolling page
+        btn.onclick = function() {
             modal.style.display = 'flex';
-            video.src = 'https://www.youtube.com/embed/S_6G4Lp2F_M?autoplay=1';
-        });
+            // Placeholder BMW video
+            video.src = 'https://www.youtube.com/embed/-Lt-ntUDj-g';
+        }
     }
 
     if (span) {
         span.onclick = function() {
             modal.style.display = 'none';
-            video.src = '';
+            video.src = ''; // Stop video when closing
         }
     }
 
