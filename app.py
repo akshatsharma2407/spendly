@@ -76,7 +76,7 @@ def login():
         if user and check_password_hash(user['password_hash'], password):
             session['user_id'] = user['id']
             session['user_name'] = user['name']
-            return redirect(url_for('landing'))
+            return redirect(url_for('profile'))
 
         return render_template("login.html", error="Invalid email or password.")
 
@@ -103,26 +103,61 @@ def logout():
     return redirect(url_for('landing'))
 
 
-@login_required
 @app.route("/profile")
-def profile():
-    return "Profile page — coming in Step 4"
-
-
 @login_required
+def profile():
+    # Hardcoded data for UI validation (Step 4)
+    user_info = {
+        "name": "Demo User",
+        "email": "demo@spendly.com",
+        "member_since": "January 2024"
+    }
+
+    summary_stats = {
+        "total_spent": 1234.56,
+        "transaction_count": 42,
+        "top_category": "Food"
+    }
+
+    transactions = [
+        {"date": "2024-09-20", "description": "Grocery Shopping", "category": "Food", "amount": -85.20},
+        {"date": "2024-09-19", "description": "Monthly Gym Membership", "category": "Health", "amount": -50.00},
+        {"date": "2024-09-18", "description": "Freelance Payment", "category": "Income", "amount": 500.00},
+        {"date": "2024-09-17", "description": "Coffee and Bagel", "category": "Food", "amount": -12.50},
+        {"date": "2024-09-15", "description": "Internet Bill", "category": "Bills", "amount": -60.00},
+    ]
+
+    category_breakdown = [
+        {"category": "Food", "amount": 450.00, "percentage": 36},
+        {"category": "Transport", "amount": 200.00, "percentage": 16},
+        {"category": "Bills", "amount": 300.00, "percentage": 24},
+        {"category": "Health", "amount": 150.00, "percentage": 12},
+        {"category": "Other", "amount": 134.56, "percentage": 12},
+    ]
+
+    return render_template(
+        "profile.html",
+        user=user_info,
+        stats=summary_stats,
+        transactions=transactions,
+        breakdown=category_breakdown
+    )
+
+
 @app.route("/expenses/add")
+@login_required
 def add_expense():
     return "Add expense — coming in Step 7"
 
 
-@login_required
 @app.route("/expenses/<int:id>/edit")
+@login_required
 def edit_expense(id):
     return "Edit expense — coming in Step 8"
 
 
-@login_required
 @app.route("/expenses/<int:id>/delete")
+@login_required
 def delete_expense(id):
     return "Delete expense — coming in Step 9"
 
