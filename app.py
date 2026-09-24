@@ -1,6 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from database.db import init_db, seed_db, get_db
+from database.queries import (
+    get_user_by_id,
+    get_summary_stats,
+    get_recent_transactions,
+    get_category_breakdown
+)
 from functools import wraps
 
 app = Flask(__name__)
@@ -106,34 +112,13 @@ def logout():
 @app.route("/profile")
 @login_required
 def profile():
-    # Hardcoded data for UI validation (Step 4)
-    user_info = {
-        "name": "Demo User",
-        "email": "demo@spendly.com",
-        "member_since": "January 2024"
-    }
+    user_id = session.get('user_id')
 
-    summary_stats = {
-        "total_spent": 1234.56,
-        "transaction_count": 42,
-        "top_category": "Food"
-    }
-
-    transactions = [
-        {"date": "2024-09-20", "description": "Grocery Shopping", "category": "Food", "amount": -85.20},
-        {"date": "2024-09-19", "description": "Monthly Gym Membership", "category": "Health", "amount": -50.00},
-        {"date": "2024-09-18", "description": "Freelance Payment", "category": "Income", "amount": 500.00},
-        {"date": "2024-09-17", "description": "Coffee and Bagel", "category": "Food", "amount": -12.50},
-        {"date": "2024-09-15", "description": "Internet Bill", "category": "Bills", "amount": -60.00},
-    ]
-
-    category_breakdown = [
-        {"category": "Food", "amount": 450.00, "percentage": 36},
-        {"category": "Transport", "amount": 200.00, "percentage": 16},
-        {"category": "Bills", "amount": 300.00, "percentage": 24},
-        {"category": "Health", "amount": 150.00, "percentage": 12},
-        {"category": "Other", "amount": 134.56, "percentage": 12},
-    ]
+    # Fetch real data from database helpers
+    user_info = get_user_by_id(user_id)
+    summary_stats = get_summary_stats(user_id)
+    transactions = get_recent_transactions(user_id)
+    category_breakdown = get_category_breakdown(user_id)
 
     return render_template(
         "profile.html",
