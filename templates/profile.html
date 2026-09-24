@@ -18,7 +18,7 @@
     <section class="stats-grid">
         <div class="stat-tile">
             <span class="stat-label">Total Spent</span>
-            <span class="stat-value">${{ "%.2f"|format(stats.total_spent) }}</span>
+            <span class="stat-value">₹{{ "%.2f"|format(stats.total_spent) }}</span>
         </div>
         <div class="stat-tile">
             <span class="stat-label">Transactions</span>
@@ -55,7 +55,7 @@
                                 </span>
                             </td>
                             <td class="amount {{ 'positive' if tx.amount > 0 else 'negative' }}">
-                                {{ "%.2f"|format(tx.amount) }}
+                                ₹{{ "%.2f"|format(tx.amount) }}
                             </td>
                         </tr>
                         {% endfor %}
@@ -72,7 +72,7 @@
                 <div class="breakdown-item">
                     <div class="breakdown-info">
                         <span>{{ item.category }}</span>
-                        <span>${{ "%.2f"|format(item.amount) }}</span>
+                        <span>₹{{ "%.2f"|format(item.amount) }}</span>
                     </div>
                     <div class="progress-bar-bg">
                         <div class="progress-bar-fill" style="width: {{ item.percentage }}%;"></div>
