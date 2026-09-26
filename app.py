@@ -144,6 +144,11 @@ def profile():
         filters=request.args # Pass args back to template to preserve form state
     )
 
+@app.route("/analytics")
+@login_required
+def analytics():
+    return render_template("analytics.html")
+
 
 @app.route("/expenses/add")
 @login_required
