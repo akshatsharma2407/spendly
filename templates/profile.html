@@ -14,6 +14,24 @@
         </div>
     </section>
 
+    <!-- Date Filter Section -->
+    <section class="filter-section">
+        <form method="GET" action="{{ url_for('profile') }}" class="filter-form">
+            <div class="filter-group">
+                <label for="start_date">From</label>
+                <input type="date" id="start_date" name="start_date" value="{{ filters.get('start_date', '') }}">
+            </div>
+            <div class="filter-group">
+                <label for="end_date">To</label>
+                <input type="date" id="end_date" name="end_date" value="{{ filters.get('end_date', '') }}">
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="btn-primary">Apply Filter</button>
+                <a href="{{ url_for('profile') }}" class="btn-secondary">Reset</a>
+            </div>
+        </form>
+    </section>
+
     <!-- Summary Stats Row -->
     <section class="stats-grid">
         <div class="stat-tile">
@@ -83,9 +101,8 @@
             </div>
         </section>
     </div>
-</div>
 
-<style>
+    <style>
 :root {
     /* Local overrides if needed, but primarily using style.css variables */
 }
@@ -171,6 +188,74 @@
     font-size: 1.75rem;
     font-weight: bold;
     color: var(--primary-color);
+}
+
+.filter-section {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.filter-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.filter-group input {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-input);
+    color: var(--text-main);
+    font-family: inherit;
+}
+
+.filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+.btn-secondary {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.2s;
+}
+
+.btn-secondary:hover {
+    color: var(--text-main);
 }
 
 .profile-main-content {
@@ -276,6 +361,15 @@
     .profile-header {
         flex-direction: column;
         text-align: center;
+    }
+
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-actions {
+        justify-content: space-between;
     }
 }
 </style>

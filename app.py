@@ -8,6 +8,7 @@ from database.queries import (
     get_category_breakdown
 )
 from functools import wraps
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'dev-secret-key-change-me-in-production'
@@ -114,18 +115,33 @@ def logout():
 def profile():
     user_id = session.get('user_id')
 
-    # Fetch real data from database helpers
+    # Extract and validate date filters
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+
+    try:
+        if start_date:
+            datetime.strptime(start_date, '%Y-%m-%d')
+        if end_date:
+            datetime.strptime(end_date, '%Y-%m-%d')
+    except ValueError:
+        # Fallback to None if date format is invalid
+        start_date = None
+        end_date = None
+
+    # Fetch filtered data from database helpers
     user_info = get_user_by_id(user_id)
-    summary_stats = get_summary_stats(user_id)
-    transactions = get_recent_transactions(user_id)
-    category_breakdown = get_category_breakdown(user_id)
+    summary_stats = get_summary_stats(user_id, start_date=start_date, end_date=end_date)
+    transactions = get_recent_transactions(user_id, start_date=start_date, end_date=end_date)
+    category_breakdown = get_category_breakdown(user_id, start_date=start_date, end_date=end_date)
 
     return render_template(
         "profile.html",
         user=user_info,
         stats=summary_stats,
         transactions=transactions,
-        breakdown=category_breakdown
+        breakdown=category_breakdown,
+        filters=request.args # Pass args back to template to preserve form state
     )
 
 
