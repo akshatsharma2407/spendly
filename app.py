@@ -144,11 +144,42 @@ def profile():
         filters=request.args # Pass args back to template to preserve form state
     )
 
+@app.route("/analytics")
+@login_required
+def analytics():
+    return render_template("analytics.html")
 
-@app.route("/expenses/add")
+
+@app.route("/expenses/add", methods=["GET", "POST"])
 @login_required
 def add_expense():
-    return "Add expense — coming in Step 7"
+    if request.method == "POST":
+        amount = request.form.get("amount")
+        category = request.form.get("category")
+        date = request.form.get("date")
+        description = request.form.get("description")
+
+        # Validation
+        if not amount or not category or not date:
+            return render_template("add_expense.html", error="Amount, category, and date are required.")
+
+        try:
+            amount_val = float(amount)
+            if amount_val <= 0:
+                return render_template("add_expense.html", error="Amount must be a positive number.")
+        except ValueError:
+            return render_template("add_expense.html", error="Invalid amount entered.")
+
+        with get_db() as conn:
+            conn.execute(
+                "INSERT INTO expenses (user_id, amount, category, date, description) VALUES (?, ?, ?, ?, ?)",
+                (session['user_id'], amount_val, category, date, description)
+            )
+            conn.commit()
+
+        return redirect(url_for('profile'))
+
+    return render_template("add_expense.html")
 
 
 @app.route("/expenses/<int:id>/edit")
