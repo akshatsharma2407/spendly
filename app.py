@@ -182,10 +182,50 @@ def add_expense():
     return render_template("add_expense.html")
 
 
-@app.route("/expenses/<int:id>/edit")
+@app.route("/expenses/<int:id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_expense(id):
-    return "Edit expense — coming in Step 8"
+    user_id = session.get('user_id')
+
+    with get_db() as conn:
+        # Fetch the expense and verify ownership
+        expense = conn.execute(
+            "SELECT * FROM expenses WHERE id = ? AND user_id = ?",
+            (id, user_id)
+        ).fetchone()
+
+    if not expense:
+        # Not found or doesn't belong to user
+        return render_template("profile.html", error="Expense not found or access denied"), 404
+
+    if request.method == "POST":
+        amount = request.form.get("amount")
+        category = request.form.get("category")
+        date = request.form.get("date")
+        description = request.form.get("description")
+
+        # Validation
+        if not amount or not category or not date:
+            return render_template("edit_expense.html", expense=expense, error="Amount, category, and date are required.")
+
+        try:
+            amount_val = float(amount)
+            if amount_val <= 0:
+                return render_template("edit_expense.html", expense=expense, error="Amount must be a positive number.")
+        except ValueError:
+            return render_template("edit_expense.html", expense=expense, error="Invalid amount entered.")
+
+        with get_db() as conn:
+            conn.execute(
+                "UPDATE expenses SET amount = ?, category = ?, date = ?, description = ? WHERE id = ? AND user_id = ?",
+                (amount_val, category, date, description, id, user_id)
+            )
+            conn.commit()
+
+        return redirect(url_for('profile'))
+
+    return render_template("edit_expense.html", expense=expense)
+
 
 
 @app.route("/expenses/<int:id>/delete")
