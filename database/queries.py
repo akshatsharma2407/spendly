@@ -139,7 +139,7 @@ def get_recent_transactions(user_id, limit=10, start_date=None, end_date=None):
         where_clause += " AND date <= ?"
         params.append(end_date)
 
-    query = f"SELECT date, description, category, amount FROM expenses {where_clause} ORDER BY date DESC LIMIT ?"
+    query = f"SELECT id, date, description, category, amount FROM expenses {where_clause} ORDER BY date DESC LIMIT ?"
     params.append(limit)
 
     with get_db() as conn:
